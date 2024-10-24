@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy & Games Hub</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
+</head>
+<body>
+    <div id="container">
+        <h1>Proxy & Games Hub</h1>
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('proxy')">Proxy</button>
+            <button class="tab-button" onclick="showTab('games')">Games</button>
+        </div>
+
+        <div id="proxy" class="tab-content active">
+            <input type="text" id="url" placeholder="Enter URL to fetch" />
+            <button id="fetchBtn">Fetch</button>
+            <div id="result"></div>
+        </div>
+
+        <div id="games" class="tab-content">
+            <h2>Games</h2>
+            <div class="game">
+                <h3>2048</h3>
+                <iframe src="https://2048game.com/" width="400" height="600" style="border:none;"></iframe>
+            </div>
+
+            <div class="game">
+                <h3>Tetris</h3>
+                <iframe src="https://tetris.com/play-tetris" width="400" height="600" style="border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
+        document.getElementById('fetchBtn').addEventListener('click', async () => {
+            const url = document.getElementById('url').value;
+            const resultDiv = document.getElementById('result');
+
+            // CORS Anywhere proxy URL
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+
+            try {
+                const response = await fetch(proxyUrl + url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.text();
+                resultDiv.innerHTML = `<pre>${data}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
